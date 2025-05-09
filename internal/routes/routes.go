@@ -10,5 +10,8 @@ func Setup(app *app.Application) *chi.Mux {
 
 	r.Get("/health", app.HealthCheck)
 
+	r.Get("/workouts/{id}", app.WorkoutHandler.GetByID)
+	r.Post("/workouts", app.WorkoutHandler.Create)
+
 	return r
 }
