@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/v-vovk/femProject/internal/app"
+	"github.com/v-vovk/femProject/internal/routes"
 )
 
 func main() {
@@ -21,10 +22,11 @@ func main() {
 
 	app.Logger.Println("Starting application...")
 
-	http.HandleFunc("/health", HealthCheck)
+	r := routes.Setup(app)
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", port),
+		Handler:      r,
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
@@ -36,8 +38,4 @@ func main() {
 	if err != nil {
 		app.Logger.Fatal("Error starting server:", err)
 	}
-}
-
-func HealthCheck(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Status is available\n")
 }
