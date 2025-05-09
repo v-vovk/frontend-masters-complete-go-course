@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
 	"time"
@@ -9,6 +10,10 @@ import (
 )
 
 func main() {
+	var port int
+	flag.IntVar(&port, "port", 8080, "Port to run the server on")
+	flag.Parse()
+
 	app, err := app.New()
 	if err != nil {
 		panic(err)
@@ -19,11 +24,13 @@ func main() {
 	http.HandleFunc("/health", HealthCheck)
 
 	server := &http.Server{
-		Addr:         ":8059",
+		Addr:         fmt.Sprintf(":%d", port),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}
+
+	app.Logger.Printf("Server is running on port %d\n", port)
 
 	err = server.ListenAndServe()
 	if err != nil {
