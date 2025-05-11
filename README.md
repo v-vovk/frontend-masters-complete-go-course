@@ -20,23 +20,17 @@ The API project is built from scratch. Before watching the course, you should in
 
 The commits on the main branch are noted in lessons throughout the course and can be used to check your code or get the latest version of the application.
 
-- [first commit][commit15] - Starting code for the **Parsing Command-Line Flags** lesson
-- [1.5 + post notes][commit15] - Starting code for the **Getting Workouts By ID** lesson
-- [1.5, 1.6, 1.7][commit17] - Starting code for the **Deleting Workouts** lesson
-- [1.8][commit18] - Starting code for the **Logging & JSON Error Responses** lesson
-- [3.1][commit31] - Starting code for the **Token Authentication & OAuth 2.0** lesson
-- [3.2][commit32] - Starting code for the **Testing the Authentication Routes** lesson
-- main branch - Final code for the course
+- Starting code for the **Parsing Command-Line Flags** lesson
+- Starting code for the **Getting Workouts By ID** lesson
+- Starting code for the **Deleting Workouts** lesson
+- Starting code for the **Logging & JSON Error Responses** lesson
+- Starting code for the **Token Authentication & OAuth 2.0** lesson
+- Starting code for the **Testing the Authentication Routes** lesson
+- Final code for the course
 
 [database]: https://frontendmasters.com/courses/complete-go/postgres-database-docker-container/
 [goose]: https://rc.frontendmasters.com/courses/complete-go/sql-migrations-with-goose/
-[commit0]: https://github.com/Melkeydev/fem-project-live/commit/050148ae8ee404d63a854b5f2d009168cdd7ffe7
-[commit15]: https://github.com/Melkeydev/fem-project-live/commit/906b53e39aa4d99507a0fb0e8005f22966746694
-[commit17]: https://github.com/Melkeydev/fem-project-live/commit/420a1a8910e528b3fa6af48a901b68502b0ee3e4
-[commit18]: https://github.com/Melkeydev/fem-project-live/commit/0152bf2362188f2a6e496afe5082ca588376dcbf
-[commit31]: https://github.com/Melkeydev/fem-project-live/commit/0f82adb67aaff0ba7ee51dd8fc5bc1e55cedde07
-[commit32]: https://github.com/Melkeydev/fem-project-live/commit/efb3ae2bad4c15f1f77bb63279da77ae9f075715
 
 ## Tests
 
-After the `workout_store_test.go` migration is added, the test will fail due to a foreign key violation. This is becasue the tests create a workout without a `user_id`. Creating a test user for the tests will fix this issue. The `main` branch has the working tests. See [this commit](https://github.com/Melkeydev/fem-project-live/commit/3d6880e49e638b1c319acbbacb3e4fa9bebc53d5) for the fix.
+After the `workout_store_test.go` migration is added, the test will fail due to a foreign key violation. This is becasue the tests create a workout without a `user_id`. Creating a test user for the tests will fix this issue. The `main` branch has the working tests.
