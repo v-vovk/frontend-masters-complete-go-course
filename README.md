@@ -33,4 +33,4 @@ The commits on the main branch are noted in lessons throughout the course and ca
 
 ## Tests
 
-After the `workout_store_test.go` migration is added, the test will fail due to a foreign key violation. This is becasue the tests create a workout without a `user_id`. Creating a test user for the tests will fix this issue. The `main` branch has the working tests.
+After the `workout_store_test.go` migration is added, the test will fail due to a foreign key violation. This is because the tests create a workout without a `user_id`. Creating a test user for the tests will fix this issue. The `main` branch has the working tests.
