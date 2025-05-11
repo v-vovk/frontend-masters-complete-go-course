@@ -9,6 +9,7 @@ import (
 
 	"github.com/v-vovk/femProject/internal/api"
 	"github.com/v-vovk/femProject/internal/store"
+	"github.com/v-vovk/femProject/migrations"
 )
 
 type Application struct {
@@ -21,6 +22,11 @@ func New() (*Application, error) {
 	pgDB, err := store.Open()
 	if err != nil {
 		return nil, err
+	}
+
+	err = store.MigrateFS(pgDB, migrations.FS, ".")
+	if err != nil {
+		panic(err)
 	}
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile)
