@@ -31,7 +31,9 @@ func New() (*Application, error) {
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile)
 
-	workoutHandler := api.NewWorkoutHandler()
+	workoutStore := store.NewPostgresWorkoutStore(pgDB)
+
+	workoutHandler := api.NewWorkoutHandler(workoutStore)
 
 	app := &Application{
 		Logger:         logger,
