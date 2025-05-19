@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -129,4 +130,31 @@ func (wh *WorkoutHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(existingWorkout)
+}
+
+func (wh *WorkoutHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	paramsWhID := chi.URLParam(r, "id")
+	if paramsWhID == "" {
+		http.NotFound(w, r)
+		return
+	}
+
+	whID, err := strconv.ParseInt(paramsWhID, 10, 64)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	err = wh.workoutStore.Delete(whID)
+	if err == sql.ErrNoRows {
+		http.Error(w, "workout not found", http.StatusNotFound)
+		return
+	}
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "error deleting workout", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
