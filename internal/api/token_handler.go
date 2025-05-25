@@ -71,6 +71,6 @@ func (h *TokenHandler) CreateToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusCreated, utils.Envelope{"token": token})
+	utils.WriteJSON(w, http.StatusCreated, utils.Envelope{"auth_token": token})
 
 }
