@@ -17,5 +17,7 @@ func Setup(app *app.Application) *chi.Mux {
 
 	r.Post("/users", app.UserHandler.RegisterUser)
 
+	r.Post("/tokens/authentication", app.TokenHandler.CreateToken)
+
 	return r
 }
