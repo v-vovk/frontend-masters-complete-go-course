@@ -3,9 +3,11 @@ package api
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 
+	"github.com/v-vovk/femProject/internal/middleware"
 	"github.com/v-vovk/femProject/internal/store"
 	"github.com/v-vovk/femProject/internal/utils"
 )
@@ -48,6 +50,15 @@ func (wh *WorkoutHandler) Create(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSON(w, http.StatusBadRequest, utils.Envelope{"error": "invalid request sent"})
 		return
 	}
+
+	currentUser := middleware.GetUser(r)
+	if currentUser == nil || currentUser == store.AnonymousUser {
+		wh.logger.Println("ERROR: Create: user not authenticated")
+		utils.WriteJSON(w, http.StatusUnauthorized, utils.Envelope{"error": "you must be logged in to create a workout"})
+		return
+	}
+
+	workout.UserID = currentUser.ID
 
 	createdWorkout, err := wh.workoutStore.Create(&workout)
 	if err != nil {
@@ -110,6 +121,32 @@ func (wh *WorkoutHandler) Update(w http.ResponseWriter, r *http.Request) {
 		existingWorkout.Entries = updateWorkoutRequest.Entries
 	}
 
+	currentUser := middleware.GetUser(r)
+	if currentUser == nil || currentUser == store.AnonymousUser {
+		wh.logger.Println("ERROR: Update: user not authenticated")
+		utils.WriteJSON(w, http.StatusUnauthorized, utils.Envelope{"error": "you must be logged in to update a workout"})
+		return
+	}
+
+	ownerID, err := wh.workoutStore.GetWorkoutOwner(whID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			wh.logger.Printf("ERROR: GetWorkoutOwner: %v", err)
+			utils.WriteJSON(w, http.StatusNotFound, utils.Envelope{"error": "workout not found"})
+			return
+		}
+
+		wh.logger.Printf("ERROR: GetWorkoutOwner: %v", err)
+		utils.WriteJSON(w, http.StatusInternalServerError, utils.Envelope{"error": "internal server error"})
+		return
+	}
+
+	if ownerID != currentUser.ID {
+		wh.logger.Println("ERROR: Update: user not authorized to update this workout")
+		utils.WriteJSON(w, http.StatusForbidden, utils.Envelope{"error": "you are not authorized to update this workout"})
+		return
+	}
+
 	err = wh.workoutStore.Update(existingWorkout)
 	if err != nil {
 		wh.logger.Printf("ERROR: Update: %v", err)
@@ -125,6 +162,32 @@ func (wh *WorkoutHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		wh.logger.Printf("ERROR: ReadIDParam: %v", err)
 		utils.WriteJSON(w, http.StatusBadRequest, utils.Envelope{"error": "invalid id parameter"})
+		return
+	}
+
+	currentUser := middleware.GetUser(r)
+	if currentUser == nil || currentUser == store.AnonymousUser {
+		wh.logger.Println("ERROR: Update: user not authenticated")
+		utils.WriteJSON(w, http.StatusUnauthorized, utils.Envelope{"error": "you must be logged in to update a workout"})
+		return
+	}
+
+	ownerID, err := wh.workoutStore.GetWorkoutOwner(whID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			wh.logger.Printf("ERROR: GetWorkoutOwner: %v", err)
+			utils.WriteJSON(w, http.StatusNotFound, utils.Envelope{"error": "workout not found"})
+			return
+		}
+
+		wh.logger.Printf("ERROR: GetWorkoutOwner: %v", err)
+		utils.WriteJSON(w, http.StatusInternalServerError, utils.Envelope{"error": "internal server error"})
+		return
+	}
+
+	if ownerID != currentUser.ID {
+		wh.logger.Println("ERROR: Update: user not authorized to delete this workout")
+		utils.WriteJSON(w, http.StatusForbidden, utils.Envelope{"error": "you are not authorized to delete this workout"})
 		return
 	}
 
