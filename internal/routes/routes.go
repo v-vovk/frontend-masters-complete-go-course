@@ -15,5 +15,7 @@ func Setup(app *app.Application) *chi.Mux {
 	r.Put("/workouts/{id}", app.WorkoutHandler.Update)
 	r.Delete("/workouts/{id}", app.WorkoutHandler.Delete)
 
+	r.Post("/users", app.UserHandler.RegisterUser)
+
 	return r
 }
