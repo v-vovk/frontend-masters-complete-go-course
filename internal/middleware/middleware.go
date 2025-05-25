@@ -36,16 +36,16 @@ func (um *UserMiddleware) Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Vary", "Authorization")
 		authHeader := r.Header.Get("Authorization")
+
 		if authHeader == "" {
 			r = SetUser(r, store.AnonymousUser)
 			next.ServeHTTP(w, r)
-
 			return
 		}
 
 		headerParts := strings.Split(authHeader, " ")
 		if len(headerParts) != 2 || headerParts[0] != "Bearer" {
-			utils.WriteJSON(w, http.StatusUnauthorized, utils.Envelope{"error": "invalid authorization header format"})
+			utils.WriteJSON(w, http.StatusUnauthorized, utils.Envelope{"error": "invalid authorization header"})
 			return
 		}
 
@@ -57,7 +57,7 @@ func (um *UserMiddleware) Authenticate(next http.Handler) http.Handler {
 		}
 
 		if user == nil {
-			utils.WriteJSON(w, http.StatusUnauthorized, utils.Envelope{"error": "token expires or not found"})
+			utils.WriteJSON(w, http.StatusUnauthorized, utils.Envelope{"error": "token expired or invalid"})
 			return
 		}
 

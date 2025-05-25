@@ -17,7 +17,7 @@ type TokenHandler struct {
 	logger     *log.Logger
 }
 
-type CreateTokenRequest struct {
+type createTokenRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
@@ -31,28 +31,26 @@ func NewTokenHandler(tokenStore store.TokenStore, userStore store.UserStore, log
 }
 
 func (h *TokenHandler) CreateToken(w http.ResponseWriter, r *http.Request) {
-	var req CreateTokenRequest
+	var req createTokenRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		h.logger.Printf("ERROR: decoding create token request: %v", err)
-		utils.WriteJSON(w, http.StatusBadRequest, utils.Envelope{"error": "invalid request payload"})
 
+	if err != nil {
+		h.logger.Printf("ERROR: createTokenRequest: %v", err)
+		utils.WriteJSON(w, http.StatusBadRequest, utils.Envelope{"error": "invalid request payload"})
 		return
 	}
 
 	user, err := h.userStore.GetByUsername(req.Username)
 	if err != nil || user == nil {
-		h.logger.Printf("ERROR: getting user by username: %v", err)
+		h.logger.Printf("ERROR: GetByUsername: %v", err)
 		utils.WriteJSON(w, http.StatusInternalServerError, utils.Envelope{"error": "internal server error"})
-
 		return
 	}
 
 	passwordsMatching, err := user.PasswordHash.Matches(req.Password)
 	if err != nil {
-		h.logger.Printf("ERROR: comparing password hash: %v", err)
+		h.logger.Printf("ERORR: PasswordHash.Mathes %v", err)
 		utils.WriteJSON(w, http.StatusInternalServerError, utils.Envelope{"error": "internal server error"})
-
 		return
 	}
 
